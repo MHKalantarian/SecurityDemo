@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">IPTSCO Inteview</string>
+    <string name="base_progress_dialog_message">Please wait…</string>
+    <string name="biometric_dialog_negative_text">Cancel</string>
+    <string name="biometric_dialog_title">Authentication</string>
+    <string name="cipher_text_hint">Ciphered Text</string>
+    <string name="decipher_text_hint">Deciphered Text</string>
+    <string name="encrypt_button_text">Encrypt</string>
+    <string name="error_dialog_negative_text">Cancel</string>
+    <string name="error_dialog_positive_text">Retry</string>
+    <string name="error_dialog_title">Error</string>
+    <string name="plain_text_hint">Plain Text</string>
 </resources>
