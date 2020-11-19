@@ -34,7 +34,7 @@ public class Password {
     }
 
     public static Password error(Throwable throwable) {
-        return error("خطا در اتصال به شبکه");
+        return error(throwable.getMessage());
     }
 
     public static Password error(String message) {

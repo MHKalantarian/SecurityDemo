@@ -26,7 +26,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 
-import static com.iptsco.interview.util.Constants.AES_NOPAD_TRANS;
+import static com.iptsco.interview.util.Constants.AES_GCM_NOPAD;
 import static com.iptsco.interview.util.Constants.ANDROID_KEYSTORE;
 import static com.iptsco.interview.util.Constants.KEY_ALIAS;
 
@@ -51,9 +51,9 @@ public class KeystoreWrapper {
         KeyGenParameterSpec keyParams = new KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .setRandomizedEncryptionRequired(true)
                 .build();
         keyGenerator.init(keyParams);
+        keyGenerator.generateKey();
     }
 
     /**
@@ -90,7 +90,7 @@ public class KeystoreWrapper {
      * @return Pair<Initialization vector, Ciphered data>
      */
     public Pair<byte[], byte[]> encrypt(String plain) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchProviderException, KeyStoreException, BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance(AES_NOPAD_TRANS);
+        Cipher cipher = Cipher.getInstance(AES_GCM_NOPAD);
         cipher.init(Cipher.ENCRYPT_MODE, getSymmetricKey());
         byte[] vector = Base64.encodeToString(cipher.getIV(), Base64.NO_WRAP).getBytes(StandardCharsets.UTF_8);
         byte[] data = Base64.encodeToString(cipher.doFinal(plain.getBytes(StandardCharsets.UTF_8)), Base64.NO_WRAP).getBytes(StandardCharsets.UTF_8);
@@ -104,7 +104,7 @@ public class KeystoreWrapper {
      * @return Plain data
      */
     public String decrypt(Pair<byte[], byte[]> encryptedData) throws BadPaddingException, IllegalBlockSizeException, CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException, NoSuchPaddingException, InvalidKeyException {
-        Cipher cipher = Cipher.getInstance(AES_NOPAD_TRANS);
+        Cipher cipher = Cipher.getInstance(AES_GCM_NOPAD);
         cipher.init(Cipher.DECRYPT_MODE, getSymmetricKey(), new GCMParameterSpec(128, Base64.decode(encryptedData.first, Base64.NO_WRAP)));
         return new String(cipher.doFinal(Base64.decode(encryptedData.second, Base64.NO_WRAP)), StandardCharsets.UTF_8);
     }
