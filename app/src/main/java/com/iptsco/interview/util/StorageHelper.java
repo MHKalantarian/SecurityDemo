@@ -2,12 +2,10 @@ package com.iptsco.interview.util;
 
 import android.content.Context;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.file.Files;
 
 /**
  * Created by MHK on 11/19/2020.
@@ -29,43 +27,24 @@ public class StorageHelper {
      * Reads text in file
      *
      * @param file File to be read
-     * @return Text contained in file
+     * @return Data contained in file
      */
-    private static String readFile(File file) {
-        StringBuilder buffer = new StringBuilder();
-        try {
-            FileInputStream fin = new FileInputStream(file);
-            InputStreamReader isr = new InputStreamReader(fin);
-            BufferedReader br = new BufferedReader(isr);
-
-            String readString = br.readLine();
-            while (readString != null) {
-                buffer.append(readString);
-                readString = br.readLine();
-            }
-
-            isr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return buffer.toString();
+    private static byte[] readFile(File file) throws IOException {
+        return Files.readAllBytes(file.toPath());
     }
 
     /**
      * Writes text to file
      *
      * @param file File on storage
-     * @param text Text to be written
+     * @param data Data to be written
      */
-    private static void writeFile(File file, String text) {
+    private static void writeFile(File file, byte[] data) throws IOException {
         FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(file);
-            fos.write(text.getBytes());
-            fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        fos = new FileOutputStream(file);
+        fos.write(data);
+        fos.flush();
+        fos.close();
     }
 
     /**
@@ -75,7 +54,7 @@ public class StorageHelper {
      * @param fileName Filename to be read
      * @return String in file
      */
-    public static String getTextFromStorage(Context context, String fileName) {
+    public static byte[] getDataFromStorage(Context context, String fileName) throws IOException {
         return readFile(createOrGetFile(context, fileName));
     }
 
@@ -84,9 +63,9 @@ public class StorageHelper {
      *
      * @param context  Storage owner
      * @param fileName Filename to be saved
-     * @param text     Text to set in file
+     * @param data     Data to set in file
      */
-    public static void setTextInStorage(Context context, String fileName, String text) {
-        writeFile(createOrGetFile(context, fileName), text);
+    public static void setDataInStorage(Context context, String fileName, byte[] data) throws IOException {
+        writeFile(createOrGetFile(context, fileName), data);
     }
 }
